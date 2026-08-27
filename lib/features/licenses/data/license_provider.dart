@@ -41,6 +41,17 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
       return false;
     }
   }
+
+  Future<bool> deleteLicense(String id) async {
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.delete('/admin/licenses/$id');
+      ref.invalidate(licensesProvider);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 final licenseActionProvider = StateNotifierProvider<LicenseNotifier, AsyncValue<void>>((ref) {

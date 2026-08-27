@@ -82,6 +82,26 @@ class LicensesScreen extends ConsumerWidget {
                                   tooltip: 'Revoke',
                                   onPressed: () => ref.read(licenseActionProvider.notifier).changeStatus(l.id, 'revoke'),
                                 ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, size: 20, color: Colors.redAccent),
+                                tooltip: 'Delete',
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Confirm Delete'),
+                                      content: Text('Hapus lisensi ${l.licenseKey} permanen?'),
+                                      actions: [
+                                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                                        FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirm == true) {
+                                    ref.read(licenseActionProvider.notifier).deleteLicense(l.id);
+                                  }
+                                }
+                              ),
                             ],
                           )
                         ),
@@ -197,3 +217,4 @@ class _CreateLicenseDialogState extends ConsumerState<CreateLicenseDialog> {
     );
   }
 }
+

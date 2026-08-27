@@ -47,43 +47,113 @@ class _PlansTab extends ConsumerWidget {
       body: plansAsync.when(
         data: (plans) {
           if (plans.isEmpty) return const Center(child: Text('No plans found.'));
-          return Card(
-            margin: const EdgeInsets.all(24),
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                DataTable(
-                  headingTextStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  columns: const [
-                    DataColumn(label: Text('CODE')),
-                    DataColumn(label: Text('NAME')),
-                    DataColumn(label: Text('PRODUCT')),
-                    DataColumn(label: Text('STATUS')),
-                    DataColumn(label: Text('ACTIONS')),
-                  ],
-                  rows: plans.map((p) => DataRow(
-                    cells: [
-                      DataCell(Text(p.code)),
-                      DataCell(Text(p.name)),
-                      DataCell(Text(p.product != null ? p.product!['name'] : p.productId)),
-                      DataCell(
-                        Chip(
-                          label: Text(p.status, style: const TextStyle(color: Colors.white, fontSize: 12)),
-                          backgroundColor: p.status == 'ACTIVE' ? Colors.green : Colors.grey,
-                        )
-                      ),
-                      DataCell(
-                        FilledButton.tonalIcon(
-                          onPressed: () => showDialog(context: context, builder: (context) => EditPlanFeaturesDialog(plan: p)),
-                          icon: const Icon(Icons.edit_attributes, size: 18),
-                          label: const Text('Edit Features'),
+          return ListView.builder(
+            padding: const EdgeInsets.all(24),
+            itemCount: plans.length,
+            itemBuilder: (context, index) {
+              final p = plans[index];
+              final productName = p.product != null ? p.product!['name'] : p.productId;
+              
+              return Card(
+                elevation: 2,
+                margin: const EdgeInsets.only(bottom: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: ExpansionTile(
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  title: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          p.code, 
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer
+                          )
                         ),
                       ),
-                    ]
-                  )).toList(),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                            const SizedBox(height: 4),
+                            Text(productName, style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  trailing: Chip(
+                    label: Text(p.status, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                    backgroundColor: p.status == 'ACTIVE' ? Colors.green : Colors.grey,
+                  ),
+                  children: [
+                    const Divider(height: 1),
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.05),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        )
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Plan Features', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              FilledButton.tonalIcon(
+                                onPressed: () => showDialog(context: context, builder: (context) => EditPlanFeaturesDialog(plan: p)),
+                                icon: const Icon(Icons.edit, size: 16),
+                                label: const Text('Edit Features'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          if (p.planFeatures == null || p.planFeatures!.isEmpty)
+                            const Text('Tidak ada fitur terdaftar untuk paket ini.', style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey))
+                          else
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              children: p.planFeatures!.map((pf) {
+                                final featureName = pf.feature != null ? pf.feature!['name'] : pf.featureId;
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.surface,
+                                    border: Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(featureName, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                                      const SizedBox(height: 4),
+                                      Text(pf.value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -535,3 +605,4 @@ class _EditFeatureDialogState extends ConsumerState<EditFeatureDialog> {
     );
   }
 }
+
