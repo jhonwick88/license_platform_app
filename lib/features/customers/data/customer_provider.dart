@@ -13,7 +13,7 @@ class CustomerNotifier extends StateNotifier<AsyncValue<void>> {
   final Ref ref;
   CustomerNotifier(this.ref) : super(const AsyncValue.data(null));
 
-  Future<bool> createCustomer(String code, String name, String email) async {
+  Future<bool> createCustomer(String code, String name, String email, String phone, String address) async {
     state = const AsyncValue.loading();
     try {
       final dio = ref.read(dioProvider);
@@ -21,6 +21,8 @@ class CustomerNotifier extends StateNotifier<AsyncValue<void>> {
         'customer_code': code,
         'name': name,
         'email': email,
+        'phone': phone,
+        'address': address,
       });
       ref.invalidate(customersProvider);
       state = const AsyncValue.data(null);

@@ -11,7 +11,7 @@ class CustomersScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customer Management', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Customers Management', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -39,13 +39,15 @@ class CustomersScreen extends ConsumerWidget {
                     DataColumn(label: Text('CODE')),
                     DataColumn(label: Text('NAME')),
                     DataColumn(label: Text('EMAIL')),
+                    DataColumn(label: Text('PHONE')),
                     DataColumn(label: Text('STATUS')),
                   ],
                   rows: customers.map((c) => DataRow(
                     cells: [
                       DataCell(Text(c.customerCode)),
                       DataCell(Text(c.name)),
-                      DataCell(Text(c.email ?? '-')),
+                      DataCell(Text(c.email ?? '')),
+                      DataCell(Text(c.phone ?? '')),
                       DataCell(
                         Chip(
                           label: Text(c.status, style: const TextStyle(color: Colors.white, fontSize: 12)),
@@ -69,6 +71,8 @@ class CustomersScreen extends ConsumerWidget {
     final codeCtrl = TextEditingController();
     final nameCtrl = TextEditingController();
     final emailCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController();
+    final addrCtrl = TextEditingController();
 
     showDialog(
       context: context,
@@ -76,15 +80,52 @@ class CustomersScreen extends ConsumerWidget {
         title: const Text('Create New Customer'),
         content: SizedBox(
           width: 400,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(controller: codeCtrl, decoration: const InputDecoration(labelText: 'Customer Code')),
-              const SizedBox(height: 16),
-              TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Name')),
-              const SizedBox(height: 16),
-              TextField(controller: emailCtrl, decoration: const InputDecoration(labelText: 'Email Address')),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: codeCtrl, 
+                  decoration: const InputDecoration(
+                    labelText: 'Customer Code',
+                    hintText: 'Contoh: CUST-001',
+                    helperText: 'ID unik untuk pelanggan',
+                  )
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: nameCtrl, 
+                  decoration: const InputDecoration(
+                    labelText: 'Customer Name',
+                    hintText: 'Contoh: PT. Sumber Makmur',
+                  )
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: emailCtrl, 
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'admin@sumbermakmur.com',
+                  )
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: phoneCtrl, 
+                  decoration: const InputDecoration(
+                    labelText: 'Phone',
+                    hintText: '081234567890',
+                  )
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: addrCtrl, 
+                  decoration: const InputDecoration(
+                    labelText: 'Address',
+                    hintText: 'Jl. Merdeka No.1',
+                  )
+                ),
+              ],
+            ),
           ),
         ),
         actions: [
@@ -92,7 +133,7 @@ class CustomersScreen extends ConsumerWidget {
           FilledButton(
             onPressed: () async {
               final success = await ref.read(customerActionProvider.notifier).createCustomer(
-                codeCtrl.text, nameCtrl.text, emailCtrl.text
+                codeCtrl.text, nameCtrl.text, emailCtrl.text, phoneCtrl.text, addrCtrl.text
               );
               if (success && context.mounted) Navigator.pop(context);
             },
@@ -103,3 +144,4 @@ class CustomersScreen extends ConsumerWidget {
     );
   }
 }
+

@@ -3,6 +3,8 @@ class Customer {
   final String customerCode;
   final String name;
   final String? email;
+  final String? phone;
+  final String? address;
   final String status;
 
   Customer({
@@ -10,6 +12,8 @@ class Customer {
     required this.customerCode,
     required this.name,
     this.email,
+    this.phone,
+    this.address,
     required this.status,
   });
 
@@ -19,6 +23,8 @@ class Customer {
       customerCode: json['customer_code'],
       name: json['name'],
       email: json['email'],
+      phone: json['phone'],
+      address: json['address'],
       status: json['status'] ?? 'ACTIVE',
     );
   }

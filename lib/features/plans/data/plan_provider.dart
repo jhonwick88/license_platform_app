@@ -32,6 +32,22 @@ class PlanNotifier extends StateNotifier<AsyncValue<void>> {
       return false;
     }
   }
+
+  Future<bool> updatePlanFeatures(String planId, List<Map<String, String>> features) async {
+    state = const AsyncValue.loading();
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.put('/admin/plans/$planId/features', data: {
+        'features': features,
+      });
+      ref.invalidate(plansProvider);
+      state = const AsyncValue.data(null);
+      return true;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      return false;
+    }
+  }
 }
 
 final planActionProvider = StateNotifierProvider<PlanNotifier, AsyncValue<void>>((ref) {

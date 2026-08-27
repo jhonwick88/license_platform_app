@@ -40,25 +40,16 @@ class ProductsScreen extends ConsumerWidget {
                     DataColumn(label: Text('NAME')),
                     DataColumn(label: Text('DESCRIPTION')),
                     DataColumn(label: Text('STATUS')),
-                    DataColumn(label: Text('ACTIONS')),
                   ],
                   rows: products.map((p) => DataRow(
                     cells: [
                       DataCell(Text(p.productCode)),
                       DataCell(Text(p.name)),
-                      DataCell(Text(p.description ?? '-')),
+                      DataCell(Text(p.description ?? '')),
                       DataCell(
                         Chip(
                           label: Text(p.status, style: const TextStyle(color: Colors.white, fontSize: 12)),
                           backgroundColor: p.status == 'ACTIVE' ? Colors.green : Colors.grey,
-                        )
-                      ),
-                      DataCell(
-                        Row(
-                          children: [
-                            IconButton(icon: const Icon(Icons.edit, size: 20), onPressed: () {}),
-                            IconButton(icon: const Icon(Icons.delete, size: 20, color: Colors.red), onPressed: () {}),
-                          ],
                         )
                       ),
                     ]
@@ -88,11 +79,30 @@ class ProductsScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: codeCtrl, decoration: const InputDecoration(labelText: 'Product Code')),
+              TextField(
+                controller: codeCtrl, 
+                decoration: const InputDecoration(
+                  labelText: 'Product Code', 
+                  hintText: 'Contoh: TP-POS',
+                  helperText: 'Gunakan singkatan unik untuk produk ini',
+                )
+              ),
               const SizedBox(height: 16),
-              TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Product Name')),
+              TextField(
+                controller: nameCtrl, 
+                decoration: const InputDecoration(
+                  labelText: 'Product Name',
+                  hintText: 'Contoh: TokoPintar POS',
+                )
+              ),
               const SizedBox(height: 16),
-              TextField(controller: descCtrl, decoration: const InputDecoration(labelText: 'Description')),
+              TextField(
+                controller: descCtrl, 
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  hintText: 'Aplikasi kasir pintar',
+                )
+              ),
             ],
           ),
         ),
@@ -112,3 +122,4 @@ class ProductsScreen extends ConsumerWidget {
     );
   }
 }
+
