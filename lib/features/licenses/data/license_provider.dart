@@ -1,8 +1,16 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../installations/data/installation_provider.dart';
 import '../../../core/network/api_client.dart';
 import 'license_model.dart';
 
-final licensesProvider = FutureProvider<List<License>>((ref) async {
+final licensesProvider = FutureProvider.autoDispose<List<License>>((ref) async {
+  // Polling every 3 seconds to auto-refresh license status
+  final timer = Timer(const Duration(seconds: 3), () {
+    ref.invalidateSelf();
+  });
+  ref.onDispose(() => timer.cancel());
+
   final dio = ref.read(dioProvider);
   final response = await dio.get('/admin/licenses');
   final data = response.data['data'] as List;
@@ -23,6 +31,7 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
         'plan_id': planId,
       });
       ref.invalidate(licensesProvider);
+      ref.invalidate(installationsProvider);
       state = const AsyncValue.data(null);
       return true;
     } catch (e, st) {
@@ -36,6 +45,19 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
       final dio = ref.read(dioProvider);
       await dio.post('/admin/licenses/$id/$action');
       ref.invalidate(licensesProvider);
+      ref.invalidate(installationsProvider);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> unbindLicense(String id) async {
+    try {
+      final dio = ref.read(dioProvider);
+      await dio.post('/admin/licenses/$id/unbind');
+      ref.invalidate(licensesProvider);
+      ref.invalidate(installationsProvider);
       return true;
     } catch (e) {
       return false;
@@ -47,6 +69,7 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
       final dio = ref.read(dioProvider);
       await dio.delete('/admin/licenses/$id');
       ref.invalidate(licensesProvider);
+      ref.invalidate(installationsProvider);
       return true;
     } catch (e) {
       return false;
@@ -57,3 +80,5 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
 final licenseActionProvider = StateNotifierProvider<LicenseNotifier, AsyncValue<void>>((ref) {
   return LicenseNotifier(ref);
 });
+
+

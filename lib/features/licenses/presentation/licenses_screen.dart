@@ -82,6 +82,27 @@ class LicensesScreen extends ConsumerWidget {
                                   tooltip: 'Revoke',
                                   onPressed: () => ref.read(licenseActionProvider.notifier).changeStatus(l.id, 'revoke'),
                                 ),
+                              if (l.status == 'ACTIVE')
+                                IconButton(
+                                  icon: const Icon(Icons.link_off, size: 20, color: Colors.blue),
+                                  tooltip: 'Reset Device (Unbind)',
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (c) => AlertDialog(
+                                        title: const Text('Confirm Unbind'),
+                                        content: const Text('Hapus ikatan perangkat pada lisensi ini? Pelanggan harus melakukan aktivasi ulang.'),
+                                        actions: [
+                                          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
+                                          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Unbind')),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      ref.read(licenseActionProvider.notifier).unbindLicense(l.id);
+                                    }
+                                  },
+                                ),
                               IconButton(
                                 icon: const Icon(Icons.delete, size: 20, color: Colors.redAccent),
                                 tooltip: 'Delete',
