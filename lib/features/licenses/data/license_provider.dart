@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../installations/data/installation_provider.dart';
+import '../../customers/data/customer_provider.dart';
 import '../../../core/network/api_client.dart';
 import 'license_model.dart';
 
@@ -32,6 +33,7 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
       });
       ref.invalidate(licensesProvider);
       ref.invalidate(installationsProvider);
+      ref.invalidate(customersProvider);
       state = const AsyncValue.data(null);
       return true;
     } catch (e, st) {
@@ -46,6 +48,7 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
       await dio.post('/admin/licenses/$id/$action');
       ref.invalidate(licensesProvider);
       ref.invalidate(installationsProvider);
+      ref.invalidate(customersProvider);
       return true;
     } catch (e) {
       return false;
@@ -58,6 +61,7 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
       await dio.post('/admin/licenses/$id/unbind');
       ref.invalidate(licensesProvider);
       ref.invalidate(installationsProvider);
+      ref.invalidate(customersProvider);
       return true;
     } catch (e) {
       return false;
@@ -70,6 +74,7 @@ class LicenseNotifier extends StateNotifier<AsyncValue<void>> {
       await dio.delete('/admin/licenses/$id');
       ref.invalidate(licensesProvider);
       ref.invalidate(installationsProvider);
+      ref.invalidate(customersProvider);
       return true;
     } catch (e) {
       return false;
