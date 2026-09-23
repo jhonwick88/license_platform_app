@@ -4,8 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    //baseUrl: 'http://203.88.125.140:8080/api/v1',
-    baseUrl: 'http://localhost:8080/api/v1',
+    baseUrl: 'http://203.88.125.140:8080/api/v1',
+    //baseUrl: 'http://localhost:8080/api/v1',
     connectTimeout: const Duration(seconds: 5),
     receiveTimeout: const Duration(seconds: 5),
   ));
