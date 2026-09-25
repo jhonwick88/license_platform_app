@@ -13,6 +13,7 @@ class License {
   final Map<String, dynamic>? product;
   final Map<String, dynamic>? plan;
   final Map<String, dynamic>? customer;
+  final Map<String, dynamic>? installation;
 
   License({
     required this.id,
@@ -28,6 +29,7 @@ class License {
     this.product,
     this.plan,
     this.customer,
+    this.installation,
   });
 
   factory License.fromJson(Map<String, dynamic> json) {
@@ -45,6 +47,7 @@ class License {
       product: json['product'],
       plan: json['plan'],
       customer: json['customer'],
+      installation: json['installation'],
     );
   }
 }

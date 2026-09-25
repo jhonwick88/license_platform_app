@@ -362,8 +362,6 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
 
           return productsAsync.when(
             data: (products) {
-              final productMap = {for (var p in products) p.id: p.name};
-
               // Filter features based on query and product
               final filteredFeatures = features.where((f) {
                 final matchProduct = _selectedProductId == null || f.productId == _selectedProductId;

@@ -1,11 +1,11 @@
 {
-    "name": "admin",
-    "short_name": "admin",
+    "name": "Pintar Labs License Admin",
+    "short_name": "License Admin",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#1E3A8A",
+    "theme_color": "#2563EB",
+    "description": "Pintar Labs License Management Platform",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
