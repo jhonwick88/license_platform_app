@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/plan_provider.dart';
@@ -132,174 +133,207 @@ class _PlansTabState extends ConsumerState<_PlansTab> {
                                   ? p.product!['name']
                                   : (productMap[p.productId] ?? p.productId);
 
+                              final features = p.planFeatures ?? [];
+
                               return Card(
-                                elevation: 1,
-                                margin: const EdgeInsets.only(bottom: 16),
+                                elevation: 0,
+                                margin: const EdgeInsets.only(bottom: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  side: BorderSide(color: Colors.grey.withOpacity(0.15)),
-                                ),
-                                child: ExpansionTile(
-                                  tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                  leading: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.primaryContainer,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      p.code,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                      ),
-                                    ),
+                                  side: BorderSide(
+                                    color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.4),
                                   ),
-                                  title: Row(
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Text(
-                                          p.name,
-                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(16),
-                                          border: Border.all(color: Colors.blue.withOpacity(0.3)),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(Icons.category_outlined, size: 13, color: Colors.blue),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              productName,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.blue,
+                                      // Top Header: Plan Code, Name, Product, Status & Action
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).colorScheme.primaryContainer,
+                                              borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            child: Text(
+                                              p.code,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 13,
+                                                color: Theme.of(context).colorScheme.onPrimaryContainer,
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.only(top: 4.0),
-                                    child: Text(
-                                      p.description ?? 'Tidak ada deskripsi',
-                                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  trailing: Chip(
-                                    padding: EdgeInsets.zero,
-                                    labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-                                    label: Text(p.status, style: const TextStyle(color: Colors.white, fontSize: 11)),
-                                    backgroundColor: p.status == 'ACTIVE' ? Colors.green : Colors.grey,
-                                  ),
-                                  children: [
-                                    const Divider(height: 1),
-                                    Container(
-                                      padding: const EdgeInsets.all(20),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.04),
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(12),
-                                          bottomRight: Radius.circular(12),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                'Plan Features & Limits',
-                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                              ),
-                                              FilledButton.tonalIcon(
-                                                onPressed: () => showDialog(
-                                                  context: context,
-                                                  builder: (context) => EditPlanFeaturesDialog(plan: p),
-                                                ),
-                                                icon: const Icon(Icons.edit, size: 16),
-                                                label: const Text('Edit Features'),
-                                              ),
-                                            ],
                                           ),
-                                          const SizedBox(height: 16),
-                                          if (p.planFeatures == null || p.planFeatures!.isEmpty)
-                                            const Text(
-                                              'Tidak ada fitur terdaftar untuk paket ini.',
-                                              style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
-                                            )
-                                          else
-                                            Wrap(
-                                              spacing: 12,
-                                              runSpacing: 12,
-                                              children: p.planFeatures!.map((pf) {
-                                                final featureName = pf.feature != null
-                                                    ? pf.feature!['name']
-                                                    : pf.featureId;
-                                                final featureCode = pf.feature != null
-                                                    ? pf.feature!['code']
-                                                    : null;
-
-                                                return Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Wrap(
+                                              crossAxisAlignment: WrapCrossAlignment.center,
+                                              spacing: 8,
+                                              runSpacing: 4,
+                                              children: [
+                                                Text(
+                                                  p.name,
+                                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                                   decoration: BoxDecoration(
-                                                    color: Theme.of(context).colorScheme.surface,
-                                                    border: Border.all(color: Colors.grey.shade300),
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    color: Colors.blue.withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
                                                   ),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                  child: Row(
                                                     mainAxisSize: MainAxisSize.min,
                                                     children: [
+                                                      const Icon(Icons.category_outlined, size: 12, color: Colors.blue),
+                                                      const SizedBox(width: 4),
                                                       Text(
-                                                        featureName,
-                                                        style: TextStyle(
-                                                          fontSize: 11,
-                                                          color: Colors.grey.shade600,
-                                                          fontWeight: FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                      if (featureCode != null)
-                                                        Text(
-                                                          featureCode,
-                                                          style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: Colors.grey.shade500,
-                                                            fontFamily: 'monospace',
-                                                          ),
-                                                        ),
-                                                      const SizedBox(height: 4),
-                                                      Text(
-                                                        pf.value,
+                                                        productName,
                                                         style: const TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 15,
-                                                          color: Colors.teal,
+                                                          fontSize: 11,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: Colors.blue,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                );
-                                              }).toList(),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: (p.status == 'ACTIVE' ? Colors.green : Colors.grey).withOpacity(0.12),
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    border: Border.all(
+                                                      color: (p.status == 'ACTIVE' ? Colors.green : Colors.grey).withOpacity(0.3),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    p.status,
+                                                    style: TextStyle(
+                                                      color: p.status == 'ACTIVE' ? Colors.green : Colors.grey,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 10,
+                                                      letterSpacing: 0.5,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
+                                          ),
+
+                                          // Edit Features Action Button
+                                          FilledButton.tonalIcon(
+                                            style: FilledButton.styleFrom(
+                                              visualDensity: VisualDensity.compact,
+                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                            ),
+                                            onPressed: () => showDialog(
+                                              context: context,
+                                              builder: (context) => EditPlanFeaturesDialog(plan: p),
+                                            ),
+                                            icon: const Icon(Icons.tune_rounded, size: 15),
+                                            label: const Text('Edit Features', style: TextStyle(fontSize: 12)),
+                                          ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+
+                                      if (p.description != null && p.description!.isNotEmpty) ...[
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          p.description!,
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12.5,
+                                          ),
+                                        ),
+                                      ],
+
+                                      const SizedBox(height: 12),
+                                      const Divider(height: 1),
+                                      const SizedBox(height: 10),
+
+                                      // Features & Limits Inline Chips with Smooth Horizontal Scroll
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Feature Limits:',
+                                            style: TextStyle(
+                                              fontSize: 12.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context).colorScheme.onSurface,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: features.isEmpty
+                                                ? Text(
+                                                    'Belum ada fitur terdaftar untuk paket ini.',
+                                                    style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                                  )
+                                                : ScrollConfiguration(
+                                                    behavior: ScrollConfiguration.of(context).copyWith(
+                                                      dragDevices: {
+                                                        PointerDeviceKind.touch,
+                                                        PointerDeviceKind.mouse,
+                                                        PointerDeviceKind.trackpad,
+                                                      },
+                                                    ),
+                                                    child: SingleChildScrollView(
+                                                      scrollDirection: Axis.horizontal,
+                                                      physics: const BouncingScrollPhysics(),
+                                                      child: Row(
+                                                        children: features.map((pf) {
+                                                          final featureName = pf.feature != null
+                                                              ? pf.feature!['name']
+                                                              : pf.featureId;
+
+                                                          return Container(
+                                                            margin: const EdgeInsets.only(right: 8),
+                                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                            decoration: BoxDecoration(
+                                                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                                              border: Border.all(
+                                                                color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                                                              ),
+                                                              borderRadius: BorderRadius.circular(6),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Text(
+                                                                  '$featureName: ',
+                                                                  style: TextStyle(
+                                                                    fontSize: 12,
+                                                                    color: Theme.of(context).colorScheme.onSurface,
+                                                                    fontWeight: FontWeight.w600,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  pf.value,
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.w900,
+                                                                    fontSize: 12.5,
+                                                                    color: Theme.of(context).colorScheme.primary,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -480,181 +514,202 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
 
                               return Card(
                                 elevation: 0,
-                                margin: const EdgeInsets.only(bottom: 24),
+                                margin: const EdgeInsets.only(bottom: 12),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  side: BorderSide(color: Colors.grey.withOpacity(0.18)),
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3)),
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Product Header Banner
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                                child: Theme(
+                                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                  child: ExpansionTile(
+                                    initiallyExpanded: true,
+                                    tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                    leading: Container(
+                                      padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.4),
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(14),
-                                          topRight: Radius.circular(14),
-                                        ),
+                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: Icon(
-                                              Icons.inventory_2_rounded,
-                                              size: 20,
-                                              color: Theme.of(context).colorScheme.primary,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  prod.name,
-                                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                                ),
-                                                Text(
-                                                  'Product Code: ${prod.productCode}',
-                                                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue.withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child: Text(
-                                              '${prodFeatures.length} Fitur Terdaftar',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          IconButton.filledTonal(
-                                            icon: const Icon(Icons.add, size: 18),
-                                            tooltip: 'Tambah Fitur untuk ${prod.name}',
-                                            onPressed: () => showDialog(
-                                              context: context,
-                                              builder: (context) => CreateFeatureDialog(preSelectedProductId: prod.id),
-                                            ),
-                                          ),
-                                        ],
+                                      child: Icon(
+                                        Icons.inventory_2_rounded,
+                                        size: 18,
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                     ),
-                                    const Divider(height: 1),
-
-                                    // Features Table
-                                    if (prodFeatures.isEmpty)
-                                      Padding(
-                                        padding: const EdgeInsets.all(24.0),
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.info_outline, color: Colors.orange, size: 20),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              'Produk ini belum memiliki fitur. Klik tombol + untuk menambahkan fitur.',
-                                              style: TextStyle(color: Colors.grey.shade700, fontStyle: FontStyle.italic),
-                                            ),
-                                          ],
+                                    title: Row(
+                                      children: [
+                                        Text(
+                                          prod.name,
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                                         ),
-                                      )
-                                    else
-                                      SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: DataTable(
-                                          headingRowColor: WidgetStateProperty.all(Colors.grey.withOpacity(0.04)),
-                                          columns: const [
-                                            DataColumn(label: Text('KODE FITUR (KEY)', style: TextStyle(fontWeight: FontWeight.bold))),
-                                            DataColumn(label: Text('NAMA FITUR', style: TextStyle(fontWeight: FontWeight.bold))),
-                                            DataColumn(label: Text('TIPE DATA', style: TextStyle(fontWeight: FontWeight.bold))),
-                                            DataColumn(label: Text('DESKRIPSI', style: TextStyle(fontWeight: FontWeight.bold))),
-                                            DataColumn(label: Text('AKSI', style: TextStyle(fontWeight: FontWeight.bold))),
-                                          ],
-                                          rows: prodFeatures.map((f) {
-                                            return DataRow(
-                                              cells: [
-                                                // Kode Fitur
-                                                DataCell(
-                                                  Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.grey.shade100,
-                                                      borderRadius: BorderRadius.circular(6),
-                                                      border: Border.all(color: Colors.grey.shade300),
-                                                    ),
-                                                    child: Text(
-                                                      f.code,
-                                                      style: const TextStyle(
-                                                        fontFamily: 'monospace',
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 13,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Nama Fitur
-                                                DataCell(
-                                                  Text(
-                                                    f.name,
-                                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5),
-                                                  ),
-                                                ),
-                                                // Tipe Data
-                                                DataCell(_buildDataTypeBadge(f.dataType)),
-                                                // Deskripsi
-                                                DataCell(
-                                                  SizedBox(
-                                                    width: 250,
-                                                    child: Text(
-                                                      f.description?.isNotEmpty == true ? f.description! : '-',
-                                                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                                                      overflow: TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Aksi
-                                                DataCell(
-                                                  Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      IconButton(
-                                                        icon: const Icon(Icons.edit_outlined, size: 18, color: Colors.blue),
-                                                        tooltip: 'Edit Fitur',
-                                                        onPressed: () => showDialog(
-                                                          context: context,
-                                                          builder: (context) => EditFeatureDialog(feature: f),
+                                        const SizedBox(width: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            prod.productCode,
+                                            style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.outline, fontFamily: 'monospace'),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Text(
+                                            '${prodFeatures.length} Fitur',
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        IconButton(
+                                          visualDensity: VisualDensity.compact,
+                                          icon: const Icon(Icons.add_circle_outline, size: 20, color: Colors.blue),
+                                          tooltip: 'Tambah Fitur untuk ${prod.name}',
+                                          onPressed: () => showDialog(
+                                            context: context,
+                                            builder: (context) => CreateFeatureDialog(preSelectedProductId: prod.id),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Icon(Icons.expand_more, size: 20),
+                                      ],
+                                    ),
+                                    children: [
+                                      const Divider(height: 1),
+                                      if (prodFeatures.isEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.info_outline, color: Colors.orange, size: 18),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                'Produk ini belum memiliki fitur. Klik icon + di atas untuk menambahkan fitur.',
+                                                style: TextStyle(color: Colors.grey.shade700, fontStyle: FontStyle.italic, fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      else
+                                        ScrollConfiguration(
+                                          behavior: ScrollConfiguration.of(context).copyWith(
+                                            dragDevices: {
+                                              PointerDeviceKind.touch,
+                                              PointerDeviceKind.mouse,
+                                              PointerDeviceKind.trackpad,
+                                            },
+                                          ),
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: DataTable(
+                                              headingRowHeight: 38,
+                                              dataRowMinHeight: 40,
+                                              dataRowMaxHeight: 48,
+                                              headingRowColor: WidgetStateProperty.all(Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3)),
+                                              columns: [
+                                                DataColumn(label: Text('KODE FITUR', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: Theme.of(context).colorScheme.onSurface))),
+                                                DataColumn(label: Text('NAMA FITUR', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: Theme.of(context).colorScheme.onSurface))),
+                                                DataColumn(label: Text('TIPE DATA', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: Theme.of(context).colorScheme.onSurface))),
+                                                DataColumn(label: Text('DESKRIPSI', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: Theme.of(context).colorScheme.onSurface))),
+                                                DataColumn(label: Text('AKSI', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: Theme.of(context).colorScheme.onSurface))),
+                                              ],
+                                              rows: prodFeatures.map((f) {
+                                                return DataRow(
+                                                  cells: [
+                                                    // Kode Fitur
+                                                    DataCell(
+                                                      Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                                        decoration: BoxDecoration(
+                                                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                                          borderRadius: BorderRadius.circular(4),
+                                                          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+                                                        ),
+                                                        child: Text(
+                                                          f.code,
+                                                          style: TextStyle(
+                                                            fontFamily: 'monospace',
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 12,
+                                                            color: Theme.of(context).colorScheme.primary,
+                                                          ),
                                                         ),
                                                       ),
-                                                      IconButton(
-                                                        icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                                                        tooltip: 'Hapus Fitur',
-                                                        onPressed: () => _confirmDeleteFeature(context, f),
+                                                    ),
+                                                    // Nama Fitur
+                                                    DataCell(
+                                                      Text(
+                                                        f.name,
+                                                        style: TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 13,
+                                                          color: Theme.of(context).colorScheme.onSurface,
+                                                        ),
                                                       ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          }).toList(),
+                                                    ),
+                                                    // Tipe Data
+                                                    DataCell(_buildDataTypeBadge(f.dataType)),
+                                                    // Deskripsi
+                                                    DataCell(
+                                                      SizedBox(
+                                                        width: 220,
+                                                        child: Text(
+                                                          f.description?.isNotEmpty == true ? f.description! : '-',
+                                                          style: TextStyle(
+                                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                            fontSize: 12.5,
+                                                            fontWeight: FontWeight.w500,
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    // Aksi
+                                                    DataCell(
+                                                      Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          IconButton(
+                                                            visualDensity: VisualDensity.compact,
+                                                            icon: const Icon(Icons.edit_outlined, size: 16, color: Colors.blue),
+                                                            tooltip: 'Edit Fitur',
+                                                            onPressed: () => showDialog(
+                                                              context: context,
+                                                              builder: (context) => EditFeatureDialog(feature: f),
+                                                            ),
+                                                          ),
+                                                          IconButton(
+                                                            visualDensity: VisualDensity.compact,
+                                                            icon: const Icon(Icons.delete_outline, size: 16, color: Colors.red),
+                                                            tooltip: 'Hapus Fitur',
+                                                            onPressed: () => _confirmDeleteFeature(context, f),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               );
                             },

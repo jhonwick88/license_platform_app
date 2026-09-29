@@ -53,6 +53,9 @@ class _LicensesScreenState extends ConsumerState<LicensesScreen> {
     final phone = license.customer?['phone'];
     final prodName = license.product != null ? license.product!['name'] : license.productId;
     final planName = license.plan != null ? license.plan!['name'] : (plan?.name ?? license.planId);
+    final installId = (license.installationId != null && license.installationId!.isNotEmpty)
+        ? license.installationId!
+        : (license.installation?['id'] ?? license.installation?['machine_fingerprint']);
 
     final sb = StringBuffer();
     sb.writeln('🔑 *INFORMASI LISENSI PINTAR LABS*');
@@ -63,6 +66,11 @@ class _LicensesScreenState extends ConsumerState<LicensesScreen> {
     }
     sb.writeln('📦 *Aplikasi*    : $prodName');
     sb.writeln('🏷️ *Paket Plan*  : $planName');
+    sb.writeln('🆔 *License ID*  : ${license.id}');
+    sb.writeln('👥 *Customer ID* : ${license.customerId}');
+    if (installId != null && installId.toString().isNotEmpty) {
+      sb.writeln('💻 *Install ID*   : $installId');
+    }
     sb.writeln('⚡ *Status*      : ${license.status}');
     sb.writeln('');
     sb.writeln('🔑 *KODE LISENSI (LICENSE KEY)*:');
@@ -1116,7 +1124,28 @@ class _LicenseDetailDialog extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 16),
+
+              // System & POS Identifiers Box (Sesuai Pengaturan TokoPintar POS)
+              _buildInfoCard(
+                context: context,
+                title: 'Identitas & Kredensial Lisensi',
+                icon: Icons.fingerprint_rounded,
+                children: [
+                  _buildLabelValueWithCopy(context, 'ID Lisensi', license.id, isMonospace: true),
+                  _buildLabelValueWithCopy(
+                    context,
+                    'Install ID',
+                    (license.installationId != null && license.installationId!.isNotEmpty)
+                        ? license.installationId!
+                        : (license.installation?['id'] ?? license.installation?['machine_fingerprint'] ?? '-'),
+                    isMonospace: true,
+                  ),
+                  _buildLabelValueWithCopy(context, 'ID Pelanggan', license.customerId),
+                  _buildLabelValue(context, 'ID Paket / Plan', license.planId.toUpperCase()),
+                ],
+              ),
+              const SizedBox(height: 16),
 
               // Customer & Product Grid
               Row(
@@ -1171,11 +1200,21 @@ class _LicenseDetailDialog extends ConsumerWidget {
                 title: 'Informasi Perangkat Terikat',
                 icon: Icons.computer,
                 children: [
-                  if (license.status == 'ACTIVE' && license.installation != null) ...[
-                    _buildLabelValue(context, 'Hostname', license.installation!['hostname'] ?? '-'),
-                    _buildLabelValue(context, 'Platform', license.installation!['platform'] ?? '-'),
-                    _buildLabelValue(context, 'Fingerprint', license.installation!['machine_fingerprint'] ?? '-'),
-                    _buildLabelValue(context, 'App Version', license.installation!['app_version'] ?? '-'),
+                  if (license.status == 'ACTIVE' && (license.installation != null || license.installationId != null)) ...[
+                    _buildLabelValueWithCopy(
+                      context,
+                      'Install ID',
+                      (license.installationId != null && license.installationId!.isNotEmpty)
+                          ? license.installationId!
+                          : (license.installation?['id'] ?? license.installation?['machine_fingerprint'] ?? '-'),
+                      isMonospace: true,
+                    ),
+                    if (license.installation != null) ...[
+                      _buildLabelValue(context, 'Hostname', license.installation!['hostname'] ?? '-'),
+                      _buildLabelValue(context, 'Platform', license.installation!['platform'] ?? '-'),
+                      _buildLabelValue(context, 'Fingerprint', license.installation!['machine_fingerprint'] ?? '-'),
+                      _buildLabelValue(context, 'App Version', license.installation!['app_version'] ?? '-'),
+                    ],
                   ] else ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -1342,7 +1381,7 @@ class _LicenseDetailDialog extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 95,
+            width: 105,
             child: Text(
               '$label:',
               style: TextStyle(
@@ -1360,6 +1399,64 @@ class _LicenseDetailDialog extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
                 color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLabelValueWithCopy(BuildContext context, String label, String value, {bool isMonospace = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canCopy = value.isNotEmpty && value != '-';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 105,
+            child: Text(
+              '$label:',
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w500,
+                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: SelectableText(
+                    value,
+                    style: TextStyle(
+                      fontSize: isMonospace ? 12 : 12.5,
+                      fontFamily: isMonospace ? 'monospace' : null,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                    ),
+                  ),
+                ),
+                if (canCopy)
+                  IconButton(
+                    icon: const Icon(Icons.copy_rounded, size: 14),
+                    padding: const EdgeInsets.all(4),
+                    constraints: const BoxConstraints(),
+                    tooltip: 'Salin $label',
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: value));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('$label ($value) disalin!'),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    },
+                  ),
+              ],
             ),
           ),
         ],

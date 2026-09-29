@@ -161,101 +161,177 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
                         itemBuilder: (context, index) {
                           final log = filtered[index];
                           final isValid = log.isValid;
+                          final dateStr = log.createdAt != null
+                              ? '${log.createdAt!.day.toString().padLeft(2, '0')}/${log.createdAt!.month.toString().padLeft(2, '0')}/${log.createdAt!.year} ${log.createdAt!.hour.toString().padLeft(2, '0')}:${log.createdAt!.minute.toString().padLeft(2, '0')}:${log.createdAt!.second.toString().padLeft(2, '0')}'
+                              : '-';
 
                           return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
+                            elevation: 0,
+                            margin: const EdgeInsets.only(bottom: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(
+                                color: isValid
+                                    ? Colors.green.withOpacity(0.2)
+                                    : Colors.red.withOpacity(0.25),
+                              ),
+                            ),
                             child: Padding(
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // Status Indicator Icon
                                   Container(
-                                    padding: const EdgeInsets.all(10),
+                                    padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
                                       color: (isValid ? Colors.green : Colors.red).withOpacity(0.12),
-                                      borderRadius: BorderRadius.circular(10),
+                                      shape: BoxShape.circle,
                                     ),
                                     child: Icon(
-                                      isValid ? Icons.check_circle_outline : Icons.cancel_outlined,
+                                      isValid ? Icons.check_circle_rounded : Icons.cancel_rounded,
                                       color: isValid ? Colors.green : Colors.red,
-                                      size: 24,
+                                      size: 18,
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
+                                  const SizedBox(width: 14),
+
+                                  // Timestamp & Status Badge
+                                  SizedBox(
+                                    width: 175,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                                  decoration: BoxDecoration(
-                                                    color: (isValid ? Colors.green : Colors.red).withOpacity(0.15),
-                                                    borderRadius: BorderRadius.circular(6),
-                                                    border: Border.all(
-                                                      color: (isValid ? Colors.green : Colors.red).withOpacity(0.4),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    isValid ? 'VALIDATED (SUCCESS)' : 'VALIDATION FAILED',
-                                                    style: TextStyle(
-                                                      color: isValid ? Colors.green : Colors.red,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 11,
-                                                    ),
-                                                  ),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                                              decoration: BoxDecoration(
+                                                color: (isValid ? Colors.green : Colors.red).withOpacity(0.15),
+                                                borderRadius: BorderRadius.circular(4),
+                                                border: Border.all(
+                                                  color: (isValid ? Colors.green : Colors.red).withOpacity(0.4),
                                                 ),
-                                                const SizedBox(width: 10),
-                                                Text(
-                                                  'Log ID: ${log.id.length > 8 ? log.id.substring(0, 8) : log.id}',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Theme.of(context).colorScheme.outlineVariant,
-                                                    fontFamily: 'monospace',
-                                                  ),
+                                              ),
+                                              child: Text(
+                                                isValid ? 'VALIDATED' : 'FAILED',
+                                                style: TextStyle(
+                                                  color: isValid ? Colors.green.shade800 : Colors.red.shade800,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 10.5,
+                                                  letterSpacing: 0.5,
                                                 ),
-                                              ],
+                                              ),
                                             ),
                                           ],
                                         ),
-                                        if (!isValid && log.failureReason != null && log.failureReason!.isNotEmpty) ...[
-                                          const SizedBox(height: 8),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.red.withOpacity(0.08),
-                                              borderRadius: BorderRadius.circular(8),
-                                              border: Border.all(color: Colors.red.withOpacity(0.2)),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.info_outline, color: Colors.red, size: 16),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Alasan: ${log.failureReason}',
-                                                    style: const TextStyle(color: Colors.red, fontSize: 13, fontWeight: FontWeight.w600),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                        const SizedBox(height: 12),
-                                        Wrap(
-                                          spacing: 16,
-                                          runSpacing: 8,
+                                        const SizedBox(height: 5),
+                                        Row(
                                           children: [
-                                            _buildInlineId(context, 'License ID', log.licenseId, () => _copy(log.licenseId, 'License ID')),
-                                            _buildInlineId(context, 'Install ID', log.installationId, () => _copy(log.installationId, 'Install ID')),
+                                            Icon(Icons.schedule, size: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              dateStr,
+                                              style: TextStyle(
+                                                fontSize: 11.5,
+                                                color: Theme.of(context).colorScheme.onSurface,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ],
                                     ),
+                                  ),
+
+                                  const SizedBox(width: 12),
+
+                                  // Center: Failure Reason or Success Info + IP Address
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        if (!isValid && log.failureReason != null && log.failureReason!.isNotEmpty)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.red.withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(6),
+                                              border: Border.all(color: Colors.red.withOpacity(0.35)),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Icon(Icons.error, color: Colors.red, size: 15),
+                                                const SizedBox(width: 6),
+                                                Flexible(
+                                                  child: Text(
+                                                    log.failureReason!,
+                                                    style: const TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 12.5,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        else
+                                          Text(
+                                            'Validasi Lisensi Klien Berhasil',
+                                            style: TextStyle(
+                                              fontSize: 13.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context).colorScheme.onSurface,
+                                            ),
+                                          ),
+                                        if (log.ipAddress != null && log.ipAddress!.isNotEmpty) ...[
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.wifi, size: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                'IP: ${log.ipAddress}',
+                                                style: TextStyle(
+                                                  fontSize: 11.5,
+                                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: 'monospace',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 16),
+
+                                  // ID Badges with 1-Click Copy
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 6,
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    children: [
+                                      _buildCompactIdBadge(
+                                        context: context,
+                                        label: 'License',
+                                        value: log.licenseId,
+                                        color: Colors.purple,
+                                        onCopy: () => _copy(log.licenseId, 'License ID'),
+                                      ),
+                                      _buildCompactIdBadge(
+                                        context: context,
+                                        label: 'Install',
+                                        value: log.installationId,
+                                        color: Colors.blue,
+                                        onCopy: () => _copy(log.installationId, 'Install ID'),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -277,14 +353,14 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),
+          Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(width: 8),
           Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: color)),
         ],
@@ -292,25 +368,49 @@ class _LogsScreenState extends ConsumerState<LogsScreen> {
     );
   }
 
-  Widget _buildInlineId(BuildContext context, String label, String value, VoidCallback onCopy) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text('$label: ', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.outlineVariant)),
-        Text(
-          value.length > 20 ? '${value.substring(0, 20)}...' : value,
-          style: const TextStyle(fontSize: 12, fontFamily: 'monospace', fontWeight: FontWeight.w600),
+  Widget _buildCompactIdBadge({
+    required BuildContext context,
+    required String label,
+    required String value,
+    required Color color,
+    required VoidCallback onCopy,
+  }) {
+    final display = value.length > 12 ? '${value.substring(0, 10)}...' : value;
+    return InkWell(
+      onTap: onCopy,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: color.withOpacity(0.35)),
         ),
-        const SizedBox(width: 4),
-        InkWell(
-          onTap: onCopy,
-          borderRadius: BorderRadius.circular(4),
-          child: Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Icon(Icons.copy, size: 14, color: Theme.of(context).colorScheme.primary),
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '$label: ',
+              style: TextStyle(
+                fontSize: 10.5,
+                color: color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              display,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontFamily: 'monospace',
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(Icons.copy, size: 12, color: color),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

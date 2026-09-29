@@ -170,278 +170,263 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                           final licenses = c.licenses ?? [];
 
                           return Card(
-                            margin: const EdgeInsets.only(bottom: 16),
-                            child: ExpansionTile(
-                              tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              leading: CircleAvatar(
-                                radius: 22,
-                                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                                child: Text(
-                                  c.name.isNotEmpty ? c.name[0].toUpperCase() : 'C',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                            elevation: 0,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.4),
                               ),
-                              title: Row(
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          c.name,
-                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  // Header: Avatar, Name, Status & Quick Action Buttons
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                                        child: Text(
+                                          c.name.isNotEmpty ? c.name[0].toUpperCase() : 'C',
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                        const SizedBox(height: 2),
-                                        Row(
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Wrap(
+                                          crossAxisAlignment: WrapCrossAlignment.center,
+                                          spacing: 8,
+                                          runSpacing: 4,
                                           children: [
-                                            Icon(Icons.email_outlined, size: 14, color: Theme.of(context).colorScheme.outlineVariant),
-                                            const SizedBox(width: 4),
                                             Text(
-                                              c.email,
-                                              style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.outlineVariant),
+                                              c.name,
+                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                             ),
-                                            if (c.company != null && c.company!.isNotEmpty) ...[
-                                              const SizedBox(width: 12),
-                                              Icon(Icons.business_outlined, size: 14, color: Theme.of(context).colorScheme.outlineVariant),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                c.company!,
-                                                style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.outlineVariant),
+                                            if (c.company != null && c.company!.isNotEmpty)
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                                  borderRadius: BorderRadius.circular(4),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(Icons.business, size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      c.company!,
+                                                      style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ],
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: (isActive ? Colors.green : Colors.grey).withOpacity(0.15),
+                                                borderRadius: BorderRadius.circular(4),
+                                                border: Border.all(
+                                                  color: (isActive ? Colors.green : Colors.grey).withOpacity(0.4),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                c.status,
+                                                style: TextStyle(
+                                                  color: isActive ? Colors.green.shade800 : Colors.grey.shade800,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 10.5,
+                                                  letterSpacing: 0.5,
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: (isActive ? Colors.green : Colors.grey).withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: (isActive ? Colors.green : Colors.grey).withOpacity(0.4),
                                       ),
-                                    ),
-                                    child: Text(
-                                      c.status,
-                                      style: TextStyle(
-                                        color: isActive ? Colors.green : Colors.grey,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              children: [
-                                const Divider(height: 1),
-                                Container(
-                                  padding: const EdgeInsets.all(20),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.surfaceContainer.withOpacity(0.4),
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(16),
-                                      bottomRight: Radius.circular(16),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Customer Info Summary & Action Buttons
+
+                                      // Actions
                                       Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Expanded(
-                                            child: Wrap(
-                                              spacing: 24,
-                                              runSpacing: 12,
-                                              children: [
-                                                _buildInfoItem(context, 'Perusahaan', c.company ?? '-'),
-                                                _buildInfoItem(context, 'No. Telepon / WhatsApp', c.phone ?? '-'),
-                                                _buildInfoItem(context, 'Customer ID', c.id),
-                                              ],
+                                          if (c.phone != null && c.phone!.isNotEmpty) ...[
+                                            IconButton(
+                                              visualDensity: VisualDensity.compact,
+                                              icon: const Icon(Icons.chat, color: Colors.green, size: 18),
+                                              tooltip: 'WhatsApp Pelanggan',
+                                              onPressed: () {
+                                                var clean = c.phone!.replaceAll(RegExp(r'[^0-9]'), '');
+                                                if (clean.startsWith('0')) clean = '62${clean.substring(1)}';
+                                                launchUrl(Uri.parse('https://wa.me/$clean'));
+                                              },
+                                            ),
+                                            const SizedBox(width: 2),
+                                          ],
+                                          IconButton(
+                                            visualDensity: VisualDensity.compact,
+                                            icon: const Icon(Icons.edit_outlined, size: 18),
+                                            tooltip: 'Edit Pelanggan',
+                                            onPressed: () => showDialog(
+                                              context: context,
+                                              builder: (context) => EditCustomerDialog(customer: c),
                                             ),
                                           ),
-                                          Row(
-                                            children: [
-                                              if (c.phone != null && c.phone!.isNotEmpty) ...[
-                                                IconButton.filledTonal(
-                                                  icon: const Icon(Icons.chat_outlined, size: 18, color: Colors.green),
-                                                  tooltip: 'Chat via WhatsApp',
-                                                  onPressed: () {
-                                                    var clean = c.phone!.replaceAll(RegExp(r'[^0-9]'), '');
-                                                    if (clean.startsWith('0')) clean = '62${clean.substring(1)}';
-                                                    launchUrl(Uri.parse('https://wa.me/$clean'));
-                                                  },
-                                                ),
-                                                const SizedBox(width: 8),
-                                              ],
-                                              FilledButton.tonalIcon(
-                                                onPressed: () => showDialog(
-                                                  context: context,
-                                                  builder: (context) => EditCustomerDialog(customer: c),
-                                                ),
-                                                icon: const Icon(Icons.edit, size: 16),
-                                                label: const Text('Edit'),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              FilledButton.tonalIcon(
-                                                style: FilledButton.styleFrom(
-                                                  backgroundColor: Colors.red.withOpacity(0.12),
-                                                  foregroundColor: Colors.red,
-                                                ),
-                                                onPressed: () async {
-                                                  final confirm = await showDialog<bool>(
-                                                    context: context,
-                                                    builder: (ctx) => AlertDialog(
-                                                      title: const Row(
-                                                        children: [
-                                                          Icon(Icons.warning_amber_rounded, color: Colors.red),
-                                                          SizedBox(width: 8),
-                                                          Text('Konfirmasi Hapus'),
-                                                        ],
-                                                      ),
-                                                      content: Text(
-                                                        'Hapus pelanggan "${c.name}"? Semua lisensi yang terhubung juga akan ikut terhapus.',
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () => Navigator.pop(ctx, false),
-                                                          child: const Text('Batal'),
-                                                        ),
-                                                        FilledButton(
-                                                          style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                                                          onPressed: () => Navigator.pop(ctx, true),
-                                                          child: const Text('Hapus Pelanggan'),
-                                                        ),
-                                                      ],
+                                          const SizedBox(width: 2),
+                                          IconButton(
+                                            visualDensity: VisualDensity.compact,
+                                            icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                                            tooltip: 'Hapus Pelanggan',
+                                            onPressed: () async {
+                                              final confirm = await showDialog<bool>(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  title: const Row(
+                                                    children: [
+                                                      Icon(Icons.warning_amber_rounded, color: Colors.red),
+                                                      SizedBox(width: 8),
+                                                      Text('Konfirmasi Hapus'),
+                                                    ],
+                                                  ),
+                                                  content: Text(
+                                                    'Hapus pelanggan "${c.name}"? Semua lisensi yang terhubung juga akan ikut terhapus.',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(ctx, false),
+                                                      child: const Text('Batal'),
                                                     ),
-                                                  );
-                                                  if (confirm == true) {
-                                                    ref.read(customerActionProvider.notifier).deleteCustomer(c.id);
-                                                  }
-                                                },
-                                                icon: const Icon(Icons.delete_outline, size: 16),
-                                                label: const Text('Delete'),
-                                              ),
-                                            ],
+                                                    FilledButton(
+                                                      style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                                                      onPressed: () => Navigator.pop(ctx, true),
+                                                      child: const Text('Hapus Pelanggan'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                              if (confirm == true) {
+                                                ref.read(customerActionProvider.notifier).deleteCustomer(c.id);
+                                              }
+                                            },
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 20),
+                                    ],
+                                  ),
 
-                                      // Subscribed Licenses
-                                      Row(
-                                        children: [
-                                          Icon(Icons.vpn_key_outlined, size: 18, color: Theme.of(context).colorScheme.primary),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            'Lisensi Terhubung (${licenses.length})',
-                                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                          ),
-                                        ],
+                                  const SizedBox(height: 10),
+
+                                  // Contact Info Pills
+                                  Wrap(
+                                    spacing: 12,
+                                    runSpacing: 6,
+                                    children: [
+                                      _buildContactChip(
+                                        context,
+                                        icon: Icons.email_outlined,
+                                        label: c.email,
+                                        onCopy: () => _copy(c.email, 'Email'),
                                       ),
-                                      const SizedBox(height: 12),
-                                      if (licenses.isEmpty)
-                                        Container(
-                                          padding: const EdgeInsets.all(16),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).colorScheme.surface,
-                                            borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.4)),
-                                          ),
-                                          child: const Row(
-                                            children: [
-                                              Icon(Icons.info_outline, size: 18, color: Colors.grey),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                'Pelanggan ini belum memiliki lisensi produk.',
-                                                style: TextStyle(color: Colors.grey, fontSize: 13),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      else
-                                        Wrap(
-                                          spacing: 12,
-                                          runSpacing: 12,
-                                          children: licenses.map((lic) {
-                                            final productName = lic['product'] != null ? lic['product']['name'] : 'Product';
-                                            final planName = lic['plan'] != null ? lic['plan']['name'] : 'Plan';
-                                            final key = lic['license_key'] ?? '';
-                                            final status = lic['status'] ?? 'ACTIVE';
+                                      if (c.phone != null && c.phone!.isNotEmpty)
+                                        _buildContactChip(
+                                          context,
+                                          icon: Icons.phone_outlined,
+                                          label: c.phone!,
+                                          onCopy: () => _copy(c.phone!, 'No. Telepon'),
+                                        ),
+                                      _buildContactChip(
+                                        context,
+                                        icon: Icons.badge_outlined,
+                                        label: 'ID: ${c.id.length > 8 ? c.id.substring(0, 8) : c.id}',
+                                        onCopy: () => _copy(c.id, 'Customer ID'),
+                                      ),
+                                    ],
+                                  ),
 
-                                            return Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context).colorScheme.surface,
-                                                border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.6)),
-                                                borderRadius: BorderRadius.circular(12),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  // Connected Licenses
+                                  if (licenses.isNotEmpty) ...[
+                                    const SizedBox(height: 10),
+                                    const Divider(height: 1),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.vpn_key_outlined, size: 14, color: Theme.of(context).colorScheme.primary),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          'Lisensi (${licenses.length}):',
+                                          style: TextStyle(
+                                            fontSize: 12.5,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context).colorScheme.onSurface,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Row(
+                                              children: licenses.map((lic) {
+                                                final prodName = lic['product'] != null ? lic['product']['name'] : 'Product';
+                                                final planName = lic['plan'] != null ? lic['plan']['name'] : 'Plan';
+                                                final key = lic['license_key'] ?? '';
+                                                final keyShort = key.length > 15 ? '${key.substring(0, 15)}...' : key;
+
+                                                return Container(
+                                                  margin: const EdgeInsets.only(right: 8),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                                    borderRadius: BorderRadius.circular(6),
+                                                    border: Border.all(
+                                                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                                                    ),
+                                                  ),
+                                                  child: Row(
                                                     mainAxisSize: MainAxisSize.min,
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            '$productName ($planName)',
-                                                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                                          ),
-                                                          const SizedBox(width: 8),
-                                                          Container(
-                                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                                            decoration: BoxDecoration(
-                                                              color: (status == 'ACTIVE' ? Colors.green : Colors.grey).withOpacity(0.15),
-                                                              borderRadius: BorderRadius.circular(4),
-                                                            ),
-                                                            child: Text(
-                                                              status,
-                                                              style: TextStyle(
-                                                                fontSize: 10,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: status == 'ACTIVE' ? Colors.green : Colors.grey,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 4),
                                                       Text(
-                                                        key,
+                                                        '$prodName ($planName) : ',
                                                         style: TextStyle(
                                                           fontSize: 12,
-                                                          color: Theme.of(context).colorScheme.primary,
-                                                          fontFamily: 'monospace',
                                                           fontWeight: FontWeight.w600,
+                                                          color: Theme.of(context).colorScheme.onSurface,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        keyShort,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontFamily: 'monospace',
+                                                          fontWeight: FontWeight.w900,
+                                                          color: Theme.of(context).colorScheme.primary,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      InkWell(
+                                                        onTap: () => _copy(key, 'Kode Lisensi'),
+                                                        child: const Padding(
+                                                          padding: EdgeInsets.all(2.0),
+                                                          child: Icon(Icons.copy, size: 13),
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                  const SizedBox(width: 12),
-                                                  IconButton(
-                                                    icon: const Icon(Icons.copy, size: 16),
-                                                    tooltip: 'Copy License Key',
-                                                    onPressed: () => _copy(key, 'Kode Lisensi'),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }).toList(),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
                                         ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                                      ],
+                                    ),
+                                  ],
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -467,7 +452,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface)),
+          Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
           const SizedBox(width: 8),
           Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: color)),
         ],
@@ -479,10 +464,44 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.outlineVariant)),
+        Text(title, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         const SizedBox(height: 2),
-        Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
       ],
+    );
+  }
+
+  Widget _buildContactChip(BuildContext context, {required IconData icon, required String label, required VoidCallback onCopy}) {
+    return InkWell(
+      onTap: onCopy,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Icon(Icons.copy, size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ],
+        ),
+      ),
     );
   }
 }
